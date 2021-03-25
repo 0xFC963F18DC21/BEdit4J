@@ -7,7 +7,7 @@ class BFile {
     /**
      * Lines - Line content of file
      */
-    private val lines: MutableMap<Int, String> = mutableMapOf()
+    private var lines: MutableMap<Int, String> = mutableMapOf()
 
     /**
      * Modify content
@@ -64,5 +64,34 @@ class BFile {
         val digits = floor(log10((filtered.keys.maxOrNull() ?: 1).toDouble())).toInt()
 
         return filtered.map { "[ ${digits}d ] %s".format(it.key, it.value) }
+    }
+
+    /**
+     * Push lines forward from
+     *
+     * Push lines forward by a given number of lines, starting from a given line.
+     *
+     * @param from   Line to start pushing forward from
+     * @param offset How much to push forward by
+     */
+    fun pushLinesForwardFrom(from: Int, offset: Int) {
+        lines = lines.mapKeys { if (it.key >= from) it.key + offset else it.key }.toMutableMap()
+    }
+
+    /**
+     * Push lines back from
+     *
+     * Push lines back towards the start of the file. If any lines are displaced past the start of the file when the push occurs, the push fails.
+     *
+     * @param from   Line to start pushing back from
+     * @param offset How much to push back by
+     */
+    @Throws(IllegalArgumentException::class)
+    fun pushLinesBackFrom(from: Int, offset: Int) {
+        if (lines.keys.any { it <= offset }) {
+            throw IllegalArgumentException("Pushing lines past line 0")
+        }
+
+        lines = lines.mapKeys { if (it.key <= from) it.key - offset else it.key }.toMutableMap()
     }
 }
