@@ -1,5 +1,7 @@
 package net.nergi
 
+import java.io.Reader
+import java.io.StringReader
 import kotlin.math.floor
 import kotlin.math.log10
 
@@ -37,9 +39,9 @@ class BFile {
         }
 
         val filtered = if (from < 0 || to < 0) lines else lines.filter { it.key in from..to }
-        val digits = floor(log10((filtered.keys.maxOrNull() ?: 1).toDouble())).toInt()
+        val digits = floor(log10((filtered.keys.maxOrNull() ?: 1).toDouble())).toInt() + 1
 
-        return filtered.map { "[ ${digits}d ] %s".format(it.key, it.value) }
+        return filtered.map { "[ %${digits}d ] %s".format(it.key, it.value) }
     }
 
     /**
@@ -61,9 +63,9 @@ class BFile {
         val sorted = lines.toSortedMap { i1, i2 -> Integer.compare(i1, i2) }
             .mapKeys { line++ }
         val filtered = if (from < 0 || to < 0) sorted else sorted.filter { it.key in from..to }
-        val digits = floor(log10((filtered.keys.maxOrNull() ?: 1).toDouble())).toInt()
+        val digits = floor(log10((filtered.keys.maxOrNull() ?: 1).toDouble())).toInt() + 1
 
-        return filtered.map { "[ ${digits}d ] %s".format(it.key, it.value) }
+        return filtered.map { "[ %${digits}d ] %s".format(it.key, it.value) }
     }
 
     /**
@@ -93,5 +95,51 @@ class BFile {
         }
 
         lines = lines.mapKeys { if (it.key <= from) it.key - offset else it.key }.toMutableMap()
+    }
+
+    /**
+     * Load from string
+     *
+     * Load a new file from a string.
+     *
+     * @param from String to load from
+     * @param gap  Gap between line numbers
+     */
+    fun loadFromString(from: String, gap: Int = 10) {
+        clear()
+
+        val reader = StringReader(from)
+        reader.useLines {
+            var line = 0
+            for (str in it) {
+                lines[++line * gap] = str
+            }
+        }
+    }
+
+    /**
+     * Load from reader
+     *
+     * Load a new file from a reader object
+     *
+     * @param reader Reader to load from
+     * @param gap    Gap between line numbers
+     */
+    fun loadFromReader(reader: Reader, gap: Int = 10) {
+        clear()
+
+        var line = 0
+        reader.forEachLine {
+            lines[++line * gap] = it
+        }
+    }
+
+    /**
+     * Clear
+     *
+     * Clear all the lines from the file
+     */
+    fun clear() {
+        lines.clear()
     }
 }
