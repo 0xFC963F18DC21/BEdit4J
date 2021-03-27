@@ -2,6 +2,7 @@ package net.nergi
 
 import java.io.Reader
 import java.io.StringReader
+import java.util.stream.Stream
 import kotlin.math.floor
 import kotlin.math.log10
 
@@ -19,7 +20,12 @@ class BFile {
      * @param line    Line number to modify
      * @param content Content to set the line to
      */
+    @Throws(IllegalArgumentException::class)
     fun modifyContent(line: Int, content: String) {
+        if (line <= 0) {
+            throw IllegalArgumentException("Not a valid line")
+        }
+
         lines[line] = content
     }
 
@@ -133,6 +139,16 @@ class BFile {
             lines[++line * gap] = it
         }
     }
+
+    /**
+     * Unload lines
+     *
+     * Loads the lines from this file without numbers, as a stream.
+     *
+     * @return Stream of lines in this file
+     */
+    fun unloadLines(): Stream<String> =
+        lines.toSortedMap { i1, i2 -> Integer.compare(i1, i2) }.values.stream()
 
     /**
      * Clear

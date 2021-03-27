@@ -2,8 +2,10 @@ package net.nergi
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import java.io.StringReader
+import java.util.stream.Collectors
 
 class BFileTest {
     private val file: BFile = BFile()
@@ -61,5 +63,27 @@ class BFileTest {
 
         assertEquals(listOf("[ 10 ] Hello", "[ 20 ] There"), file.getRawLines())
         assertEquals(listOf("[ 1 ] Hello", "[ 2 ] There"), file.getActualLines())
+    }
+
+    @Test
+    fun `files can unload lines correctly`() {
+        file.clear()
+        file.modifyContent(10, "Fizz")
+        file.modifyContent(20, "    Buzz")
+
+        val collected = file.unloadLines().collect(Collectors.toList())
+        assertEquals(listOf("Fizz", "    Buzz"), collected)
+    }
+
+    @Test
+    fun `throwing methods actually throw`() {
+        file.clear()
+        file.modifyContent(5, "Hello")
+
+        assertThrows(IllegalArgumentException::class.java) { file.modifyContent(0, "INVALID") }
+        assertThrows(IllegalArgumentException::class.java) { file.getRawLines(10, 5) }
+        assertThrows(IllegalArgumentException::class.java) { file.getActualLines(10, 5) }
+        assertThrows(IllegalArgumentException::class.java) { file.getActualLines(10, 5) }
+        assertThrows(IllegalArgumentException::class.java) { file.pushLinesBackFrom(10, 10) }
     }
 }
