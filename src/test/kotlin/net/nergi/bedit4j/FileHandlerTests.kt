@@ -1,6 +1,5 @@
 package net.nergi.bedit4j
 
-import IgnoreInRunner
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -54,7 +53,6 @@ class FileHandlerTests {
     }
 
     @Test
-    @IgnoreInRunner
     fun `files are loaded correctly`() {
         initialize()
 
