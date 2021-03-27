@@ -1,4 +1,4 @@
-package net.nergi.parser
+package net.nergi.bedit4j.parser
 
 import java.util.Collections
 import java.util.StringTokenizer

@@ -1,13 +1,13 @@
-package net.nergi
+package net.nergi.bedit4j
 
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import java.io.StringReader
 import java.util.stream.Collectors
 
-class BFileTest {
+class BFileTests {
     private val file: BFile = BFile()
 
     @Test

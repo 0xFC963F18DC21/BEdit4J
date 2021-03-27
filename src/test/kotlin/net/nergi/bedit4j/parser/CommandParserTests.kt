@@ -1,4 +1,4 @@
-package net.nergi.parser
+package net.nergi.bedit4j.parser
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
-class CommandParserTest {
+class CommandParserTests {
     @Test
     fun `parser returns null on empty string`() {
         assertNull(CommandParser.tokenise(""), "CommandParser has returned a non-null on empty string!")

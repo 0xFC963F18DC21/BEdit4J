@@ -1,4 +1,4 @@
-package net.nergi
+package net.nergi.bedit4j
 
 import java.io.Reader
 import java.io.StringReader
