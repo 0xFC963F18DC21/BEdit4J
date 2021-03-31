@@ -40,11 +40,17 @@ class BFile {
      */
     @Throws(IllegalArgumentException::class)
     fun getRawLines(from: Int = -1, to: Int = -1): List<String> {
-        if (to < from) {
-            throw IllegalArgumentException("Illegal range of lines")
+        var t = to
+
+        if (t < from) {
+            if (t != -1) {
+                throw IllegalArgumentException("Illegal range of lines")
+            } else {
+                t = lines.keys.maxOrNull() ?: 0
+            }
         }
 
-        val filtered = if (from < 0 || to < 0) lines else lines.filter { it.key in from..to }
+        val filtered = if (from < 0 || t < 0) lines else lines.filter { it.key in from..t }
         val digits = floor(log10((filtered.keys.maxOrNull() ?: 1).toDouble())).toInt() + 1
 
         return filtered.map { "[ %${digits}d ] %s".format(it.key, it.value) }
@@ -61,14 +67,20 @@ class BFile {
      */
     @Throws(IllegalArgumentException::class)
     fun getActualLines(from: Int = -1, to: Int = -1): List<String> {
-        if (to < from) {
-            throw IllegalArgumentException("Illegal range of lines")
+        var t = 10
+
+        if (t < from) {
+            if (t != -1) {
+                throw IllegalArgumentException("Illegal range of lines")
+            } else {
+                t = lines.keys.maxOrNull() ?: 0
+            }
         }
 
         var line = 1
         val sorted = lines.toSortedMap { i1, i2 -> Integer.compare(i1, i2) }
             .mapKeys { line++ }
-        val filtered = if (from < 0 || to < 0) sorted else sorted.filter { it.key in from..to }
+        val filtered = if (from < 0 || t < 0) sorted else sorted.filter { it.key in from..t }
         val digits = floor(log10((filtered.keys.maxOrNull() ?: 1).toDouble())).toInt() + 1
 
         return filtered.map { "[ %${digits}d ] %s".format(it.key, it.value) }
@@ -82,7 +94,14 @@ class BFile {
      * @param from   Line to start pushing forward from
      * @param offset How much to push forward by
      */
+    @Throws(IllegalArgumentException::class)
     fun pushLinesForwardFrom(from: Int, offset: Int) {
+        if (offset < 0) {
+            throw IllegalArgumentException("Negative offset")
+        } else if (from > lines.keys.maxOrNull() ?: 0) {
+            throw IllegalArgumentException("No lines to push")
+        }
+
         lines = lines.mapKeys { if (it.key >= from) it.key + offset else it.key }.toMutableMap()
     }
 
@@ -98,6 +117,10 @@ class BFile {
     fun pushLinesBackFrom(from: Int, offset: Int) {
         if (lines.keys.any { it <= offset }) {
             throw IllegalArgumentException("Pushing lines past line 0")
+        } else if (offset < 0) {
+            throw IllegalArgumentException("Negative offset")
+        } else if (from <= 0) {
+            throw IllegalArgumentException("No lines to push")
         }
 
         lines = lines.mapKeys { if (it.key <= from) it.key - offset else it.key }.toMutableMap()

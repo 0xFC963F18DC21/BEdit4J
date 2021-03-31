@@ -28,6 +28,21 @@ tasks.withType<KotlinCompile>() {
     kotlinOptions.jvmTarget = "1.8"
 }
 
+val mainLoc = "MainKt"
+
+val jar by tasks.getting(Jar::class) {
+    manifest {
+        attributes["Main-Class"] = mainLoc
+        attributes["Implementation-Version"] = archiveVersion
+    }
+
+    from ({
+        configurations.runtimeClasspath.get().filter {
+            it.name.endsWith("jar")
+        }.map { zipTree(it) }
+    })
+}
+
 application {
-    mainClassName = "MainKt"
+    mainClassName = mainLoc
 }
