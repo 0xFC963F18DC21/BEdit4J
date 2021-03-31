@@ -67,7 +67,7 @@ class BFile {
      */
     @Throws(IllegalArgumentException::class)
     fun getActualLines(from: Int = -1, to: Int = -1): List<String> {
-        var t = 10
+        var t = to
 
         if (t < from) {
             if (t != -1) {
